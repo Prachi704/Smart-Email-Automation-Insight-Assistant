@@ -10,6 +10,9 @@ and sends concise insights to WhatsApp using n8n automation.
 - Gmail API
 - Google Gemini AI
 - WhatsApp Business Cloud API
+  
+  <img width="581" height="329" alt="image" src="https://github.com/user-attachments/assets/ffaeec28-8938-45c8-a01f-81117b8c0863" />
+
 
 ## 🔁 Workflow Steps
 1. Fetch emails from Gmail
