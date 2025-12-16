@@ -1,0 +1,157 @@
+{
+  "name": "Smart Email Automation & Insight Assistant",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "787cab14-80cf-4916-b5e9-7f08cfaa4e15",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d77d8682-3c56-4409-8f2f-eb4727af32f2",
+      "name": "Get many messages",
+      "webhookId": "91cf46af-f7fc-4410-9a0b-c18f9468593c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "76TJAvISfBBVZbSk",
+          "name": "Gmail account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an email assistant.\n\nSummarize the following email in 2–3 short bullet points,\noptimized for WhatsApp notification.\n\nEmail content:\n{{$json.snippet}}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an Email assistant designed to help users manage their inbox more efficiently. \nYour responsibilities:\nSummarize the email into 2–3 very short bullet points \noptimized for WhatsApp notifications.\n\nEach summary must include:\n- Email intent/type\n- Most important detail (date, request, amount, etc.)\n- Whether action is required (Yes/No)\n\nKeep the summary under 40–50 words.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c5f3fa34-cd7f-4fa5-b96a-7c2496f1bc9b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        272,
+        208
+      ],
+      "id": "fff5e5eb-ea66-4a23-baf9-67d5cdc92e65",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "F4uU2x7pbdIc8tIf",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "819193974620556",
+        "recipientPhoneNumber": "918168863713",
+        "textBody": "={{$json.output}}\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "157749c0-b274-4878-83ba-8eeacbbf9dcf",
+      "name": "Send message",
+      "webhookId": "5213a26f-63d1-4116-8cd2-d3729ca3ec39",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "AibkEm65GjwpRyMM",
+          "name": "WhatsApp account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6c4dd0ff-5365-4e99-97ca-b467b89721ad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c01f7ff30517601f20fce7939281bb83484f30ddf0484830ffba0329c619a57f"
+  },
+  "id": "pwiayaYzAwLxnmRU",
+  "tags": []
+}
